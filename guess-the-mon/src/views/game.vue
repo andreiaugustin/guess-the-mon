@@ -4,7 +4,8 @@
 <template>
   <div class="bg-white">
 	<div class="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
-	  <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">Score </h2>
+	  <h3 class="text-xl tracking-tight text-gray-900">High Score: {{globalHighScore}}</h3>
+	  <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">Score: {{currScore}}</h2>
 
 <!--       <div class="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
 		<div v-for="pokemon in pokemons" :key="pokemon.id" class="group relative">
@@ -20,7 +21,7 @@
 
 		</div>
 	  </div> -->
-	  <button @click="this.$forceUpdate();" class="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+	  <button @click="drawdiffCard()" class="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 		Restart
 	  </button>
 	  <div :key="pokemon.id" class="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 xl:gap-x-8 center">
@@ -45,6 +46,9 @@ const pokemons = await getPokemon()
 var i = 0;
 var pokemon = pokemons[i]
 var done = []
+var globalHighScore = parseInt(window.localStorage.getItem('pokemonGameHighScore')) | 0
+var currScore = 0;
+console.log(globalHighScore)
 console.log(pokemon)
 export default {
   setup(){
@@ -53,6 +57,8 @@ export default {
 	  i,
 	  pokemons,
 	  done,
+	  globalHighScore,
+	  currScore,
 	})
   },
   methods:{
@@ -101,8 +107,11 @@ export default {
     {
       // load next pokemon
 	  this.i += 1
+	  if(this.globalHighScore <= this.currScore) this.globalHighScore += 1;
+	  this.currScore += 1
       this.pokemon = pokemons[this.i]
 	  console.log(this.pokemon)
+	  window.localStorage.setItem('pokemonGameHighScore',this.globalHighScore.toString())
 	  this.$forceUpdate();
       // maybe here we can also score++ and update the score on the page?
     }
@@ -133,6 +142,14 @@ export default {
 		return true;
 	  }
 	  else return false;
+	},
+	drawdiffCard(){
+		this.currScore = 0;
+		this.i += 1;
+		this.pokemon = pokemons[this.i];
+		this.pokemon.guessedName = pokemons[this.i].guessedName;
+		console.log(this.pokemon.name)
+		this.$forceUpdate()
 	}
   },
   mounted(){
