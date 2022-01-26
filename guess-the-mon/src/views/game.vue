@@ -100,8 +100,10 @@ export default {
     if (!currState.innerHTML.includes('_'))
     {
       // load next pokemon
-      alert('Nicely done, next pokemon please!')
-
+	  this.i += 1
+      this.pokemon = pokemons[this.i]
+	  console.log(this.pokemon)
+	  this.$forceUpdate();
       // maybe here we can also score++ and update the score on the page?
     }
 
