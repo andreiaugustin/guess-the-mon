@@ -1,4 +1,4 @@
-
+import * as request from 'sync-request'
 export class Pokemon{
     id: number;
     name: string;
@@ -44,25 +44,23 @@ function getRandomOrder(order : any[]){
 }
 
 
-export async function getPokemon(){
-    var res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=52')
-    let jsonObj = await res.json()
+export function getPokemon(){
+    var res : any = request.default('GET','https://pokeapi.co/api/v2/pokemon?limit=52')
+    let jsonObj : Object = JSON.parse(res.body)
+    console.log(jsonObj)
     let nonImageJson = jsonObj['results']
-    let resArr = []
+    let resArr : any[] = []
     for (let pokemon of nonImageJson) {
-        // var pokemonObj = new Pokemon();
+        
         let temp = pokemon["url"].split("/")
         let id = parseInt(temp.at(-2))
         let name = pokemon.name
         let imgUrl = `https://cdn.traction.one/pokedex/pokemon/${id}.png` 
         let imgAlt = `${name} Picture`
         let guessedName = '_'.repeat(name.length);
-        // for(var i=0;i<pokemonObj.name.length;i++){
-        //     pokemonObj.underScores = pokemonObj.underScores + "_"
-        // }
-        // pokemonObj.underScores = pokemonObj.underScores.split("").join(" ")
-        
+
         resArr.push(new Pokemon(id, name, imgUrl, imgAlt, guessedName));
     }
     return getRandomOrder(resArr)
 }
+getPokemon()
